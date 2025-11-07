@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Portal ISULPAR — Exemplar Redesign</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --brand-500: #0b63b7;
+      --brand-700: #064e8f;
+      --muted: #6b7280;
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --radius: 12px;
+      --gap: 18px;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:#0f1724;line-height:1.4}
+
+    /* Container */
+    .container{max-width:1100px;margin:28px auto;padding:24px}
+
+    /* Header */
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--brand-500),var(--brand-700));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:20px}
+    nav{display:flex;gap:12px;align-items:center}
+    .nav-link{padding:10px 14px;border-radius:10px;text-decoration:none;color:var(--muted);font-weight:600}
+    .nav-link.primary{background:transparent;color:var(--brand-700)}
+
+    /* CTA */
+    .cta{display:flex;gap:10px;align-items:center}
+    .btn{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;background:var(--brand-500);color:white;font-weight:700;border:0;cursor:pointer}
+    .btn.ghost{background:transparent;border:2px solid rgba(11,99,183,0.12);color:var(--brand-700);font-weight:700}
+
+    /* Hero */
+    .hero{display:grid;grid-template-columns:1fr 380px;gap:28px;margin-top:28px;align-items:center}
+    .hero-card{background:var(--card);border-radius:var(--radius);padding:28px;box-shadow:0 8px 24px rgba(12,24,48,0.06)}
+    h1{margin:0 0 8px;font-size:28px}
+    p.lead{margin:0;color:var(--muted)}
+
+    .quick-access{display:flex;flex-direction:column;gap:12px}
+    .portal-card{display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:10px;border:1px solid #eef2f6}
+    .portal-card h3{margin:0;font-size:16px}
+    .portal-card small{color:var(--muted)}
+
+    /* Grid / features */
+    .features{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+    .feature{background:var(--card);padding:18px;border-radius:12px;border:1px solid #eef2f6}
+    .feature h4{margin:0 0 6px}
+    .feature p{margin:0;color:var(--muted);font-size:14px}
+
+    /* Footer */
+    footer{margin-top:28px;padding:18px;border-radius:12px;background:transparent;text-align:center;color:var(--muted)}
+
+    /* Responsive */
+    @media (max-width:900px){
+      .hero{grid-template-columns:1fr;}
+      .features{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:520px){
+      header{flex-direction:column;align-items:flex-start}
+      nav{width:100%;overflow:auto}
+      .features{grid-template-columns:1fr}
+      .btn{padding:8px 10px}
+    }
+
+    /* Accessibility helpers */
+    .sr-only{position:absolute;left:-10000px}
+  </style>
+</head>
+<body>
+  <div class="container" role="main">
+    <header>
+      <div class="brand">
+        <div class="logo">IS</div>
+        <div>
+          <div style="font-weight:800">ISULPAR</div>
+          <div style="font-size:12px;color:var(--muted)">Centro Universitário</div>
+        </div>
+      </div>
+
+      <nav aria-label="Menu principal">
+        <a class="nav-link" href="#sobre">Sobre</a>
+        <a class="nav-link" href="#cursos">Cursos</a>
+        <a class="nav-link" href="#contato">Contato</a>
+        <a class="nav-link primary" href="#noticias">Notícias</a>
+      </nav>
+
+      <div class="cta">
+        <button class="btn" id="open-portal" title="Acessar portal acadêmico">Acessar Portal</button>
+        <button class="btn ghost" id="btn-help" aria-label="Ajuda">Ajuda</button>
+      </div>
+    </header>
+
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="hero-card" style="min-height:180px">
+        <h1 id="hero-heading">Acesso rápido ao Portal Acadêmico</h1>
+        <p class="lead">Entre com seu RA e senha para ver notas, horários, matrículas e documentos acadêmicos — tudo em um só lugar.</p>
+
+        <div style="margin-top:18px;display:flex;gap:12px;flex-wrap:wrap">
+          <button class="btn" onclick="openPortal()">Entrar no Portal</button>
+          <a class="btn ghost" href="#matricula">Matrícula / Vagas</a>
+        </div>
+
+        <div style="margin-top:20px;display:flex;gap:12px;align-items:center">
+          <div style="width:36px;height:36px;border-radius:8px;background:#eef6ff;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--brand-700)">i</div>
+          <div style="font-size:14px;color:var(--muted)">Dica: se esqueceu a senha, use 'Esqueci minha senha' no portal.</div>
+        </div>
+      </div>
+
+      <aside style="position:relative">
+        <div class="hero-card quick-access" aria-label="Acesso rápido">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <strong>Acesso rápido</strong>
+              <div style="font-size:12px;color:var(--muted)">Entrar direto nas áreas mais usadas</div>
+            </div>
+            <div style="font-size:12px;color:var(--muted)">Última atualização: 07/11/2025</div>
+          </div>
+
+          <div class="portal-card" role="group" aria-label="Acesso aluno">
+            <div>
+              <h3>Portal do Aluno</h3>
+              <small>Notas, frequência e matrícula</small>
+            </div>
+            <button class="btn" onclick="openPortal()">Entrar</button>
+          </div>
+
+          <div class="portal-card">
+            <div>
+              <h3>Sistema Professor</h3>
+              <small>Lançamento de notas e horário</small>
+            </div>
+            <a class="btn ghost" href="#">Entrar</a>
+          </div>
+
+          <div class="portal-card">
+            <div>
+              <h3>Serviços</h3>
+              <small>2ª via, documentos, boletos</small>
+            </div>
+            <a class="btn ghost" href="#">Acessar</a>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="features" aria-label="Principais atalhos">
+      <div class="feature">
+        <h4>Horários</h4>
+        <p>Visualize seu horário da semana e baixe em PDF.</p>
+      </div>
+      <div class="feature">
+        <h4>Notas</h4>
+        <p>Confirme lançamentos e histórico escolar.</p>
+      </div>
+      <div class="feature">
+        <h4>Matrícula</h4>
+        <p>Acompanhe prazos e solicite matrícula.</p>
+      </div>
+      <div class="feature">
+        <h4>Financeiro</h4>
+        <p>Boletos, pagamentos e comprovantes.</p>
+      </div>
+      <div class="feature">
+        <h4>Biblioteca</h4>
+        <p>Catálogo, reservas e horários de atendimento.</p>
+      </div>
+      <div class="feature">
+        <h4>Contato</h4>
+        <p>Atendimento, telefones e e-mails úteis.</p>
+      </div>
+    </section>
+
+    <footer>
+      <div style="font-size:13px">© ISULPAR — Exemplar de redesign (para uso acadêmico). Projeto com foco em acessibilidade e responsividade.</div>
+    </footer>
+  </div>
+
+  <script>
+    function openPortal(){
+      // Demo: abre em nova aba o sistema real. Aqui usamos um placeholder.
+      window.open('https://portal.isulpar.edu.br/','_blank');
+    }
+
+    // Keyboard accessibility: Enter on focused portal button
+    document.getElementById('open-portal').addEventListener('keyup', function(e){ if(e.key === 'Enter'){ openPortal(); } });
+
+    // Simple mobile detection to adapt wording (exemplo)
+    (function(){
+      const isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
+      if(isMobile){
+        document.getElementById('open-portal').textContent = 'Entrar (mobile)';
+      }
+    })();
+  </script>
+</body>
+</html>
