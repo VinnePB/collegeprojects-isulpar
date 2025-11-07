@@ -1,0 +1,74 @@
+name: Deploy static site to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pages-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v3
+
+  github-pages-deploy:
+    needs: pages-build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify site folder exists
+        run: |
+          if [ ! -d "piskel-invasion" ]; then
+            echo "ERROR: Folder 'piskel-invasion' not found."
+            exit 1
+          fi
+          echo "Found folder: piskel-invasion"
+
+      - name: Install dependencies and build (if needed)
+        run: |
+          cd piskel-invasion
+          if [ -f package.json ]; then
+            npm install --no-audit --no-fund
+            if npm run | grep -q build; then
+              npm run build
+            fi
+          fi
+          cd ..
+
+      - name: Determine publish directory
+        id: publishdir
+        run: |
+          if [ -d "piskel-invasion/dist" ]; then
+            echo "publish_dir=piskel-invasion/dist" >> $GITHUB_OUTPUT
+          elif [ -d "piskel-invasion/build" ]; then
+            echo "publish_dir=piskel-invasion/build" >> $GITHUB_OUTPUT
+          elif [ -f "piskel-invasion/index.html" ]; then
+            echo "publish_dir=piskel-invasion" >> $GITHUB_OUTPUT
+          else
+            echo "ERROR: No valid publish directory found."
+            exit 1
+          fi
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ steps.publishdir.outputs.publish_dir }}
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
