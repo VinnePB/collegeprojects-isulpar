@@ -9,12 +9,13 @@
     :root {
       --brand-dark: #0a3161;
       --brand-main: #174ea6;
+      --brand-accent: #1e66d0;
       --brand-light: #e8f0fe;
       --text-dark: #1e293b;
       --text-light: #64748b;
       --neutral-bg: #f8fafc;
       --radius: 12px;
-      --transition: all 0.25s ease;
+      --transition: all 0.22s ease;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -22,202 +23,251 @@
 
     /* Header */
     header {
-      background: var(--brand-dark);
+      background: linear-gradient(180deg, rgba(10,49,97,0.98), rgba(23,78,166,0.98));
       color: white;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px 40px;
+      padding: 12px 36px;
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+      box-shadow: 0 6px 20px rgba(10,49,97,0.15);
     }
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
-    .logo {
-      background: linear-gradient(135deg, var(--brand-dark), var(--brand-main));
-      width: 52px; height: 52px;
-      border-radius: var(--radius);
+    /* Brasão (SVG) container */
+    .crest {
+      width: 56px; height: 56px; flex: 0 0 56px;
       display: flex; align-items: center; justify-content: center;
-      font-weight: 700;
-      font-family: 'Poppins', sans-serif;
-      font-size: 18px;
-      color: white;
+      background: linear-gradient(135deg,var(--brand-dark),var(--brand-accent));
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+    .crest svg { width: 36px; height: 36px; display:block }
+
+    .brand-name {
+      display: flex; flex-direction: column; line-height: 1.05;
     }
     .brand-name strong {
-      font-family: 'Poppins', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
+      font-family: 'Poppins', sans-serif; font-size: 18px; font-weight: 700; color: #fff;
     }
+    .brand-name small { color: rgba(255,255,255,0.85); font-size: 12px }
+
     nav { display: flex; gap: 20px; }
-    .nav-link {
-      color: #ffffffcc;
-      text-decoration: none;
-      font-weight: 600;
-      transition: var(--transition);
-    }
-    .nav-link:hover { color: white; }
+    .nav-link { color: rgba(255,255,255,0.9); text-decoration: none; font-weight: 600; padding: 8px 10px; border-radius: 8px }
+    .nav-link:hover { background: rgba(255,255,255,0.06); }
 
     /* Hero */
     .hero {
-      margin-top: 90px;
-      background: linear-gradient(135deg, var(--brand-dark), var(--brand-main));
+      margin-top: 94px;
+      background: linear-gradient(180deg, rgba(23,78,166,1), rgba(14,56,107,1));
       color: white;
       text-align: center;
-      padding: 80px 20px;
+      padding: 84px 20px;
+      border-bottom-left-radius: 22px;
+      border-bottom-right-radius: 22px;
+      box-shadow: inset 0 -40px 60px rgba(0,0,0,0.06);
     }
-    .hero h1 {
-      font-family: 'Poppins', sans-serif;
-      font-size: 36px;
-      margin-bottom: 10px;
-    }
-    .hero p { color: #e8f0fe; max-width: 600px; margin: 0 auto 20px; }
-    .hero small { display: block; color: #c7d4f6; }
+    .hero h1 { font-family: 'Poppins', sans-serif; font-size: 36px; margin-bottom: 10px; }
+    .hero p { color: #dfeefd; max-width: 780px; margin: 0 auto 18px; }
+    .hero .meta { color: #cddffb; font-size: 13px }
 
-    /* Section */
-    section {
-      max-width: 1100px;
-      margin: 60px auto;
-      padding: 0 20px;
-    }
-    section h2 {
-      text-align: center;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 700;
-      color: var(--brand-dark);
-      margin-bottom: 30px;
-    }
-    .about p {
-      text-align: center;
-      max-width: 800px;
-      margin: 0 auto;
-      color: var(--text-light);
-      font-size: 16px;
-      line-height: 1.6;
-    }
+    /* Content sections */
+    .container { max-width: 1100px; margin: 36px auto; padding: 0 20px; }
+    section { margin: 36px 0; }
+    section h2 { text-align: center; font-family:'Poppins', sans-serif; color: var(--brand-dark); margin-bottom: 22px }
 
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 24px;
-    }
-    .card {
-      background: white;
-      border-radius: var(--radius);
-      padding: 28px 24px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-      text-align: center;
-      transition: var(--transition);
-    }
-    .card:hover { transform: translateY(-3px); box-shadow: 0 6px 22px rgba(0,0,0,0.08); }
-    .card h3 { font-family: 'Poppins', sans-serif; margin-bottom: 8px; font-size: 18px; color: var(--brand-main); }
-    .card p { color: var(--text-light); font-size: 15px; }
+    .about p { max-width: 900px; margin: 0 auto; color: var(--text-light); line-height: 1.6 }
+
+    .cards { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 20px }
+    .card { background: white; padding: 22px; border-radius: 12px; box-shadow: 0 6px 18px rgba(15,23,42,0.06); transition: var(--transition); text-align: left }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 10px 28px rgba(15,23,42,0.08) }
+    .card h3 { font-family: 'Poppins', sans-serif; color: var(--brand-dark); margin-bottom: 8px }
+    .card p { color: var(--text-light); font-size: 14px }
+
+    /* Courses grid with small icon */
+    .course { display:flex; gap:12px; align-items:center }
+    .course .icon { width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,var(--brand-light),#fff);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(23,78,166,0.06) }
+    .course strong{display:block}
+
+    /* Contact */
+    .contact-grid { display:grid; grid-template-columns:1fr 320px; gap:20px }
+    .contact-box { background:white;padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(15,23,42,0.06) }
 
     /* Footer */
-    footer {
-      background: var(--brand-dark);
-      color: #e8f0fe;
-      text-align: center;
-      padding: 28px 20px;
-      font-size: 14px;
-      margin-top: 80px;
-    }
-    footer p { margin: 4px 0; }
+    footer { background: linear-gradient(180deg,var(--brand-dark),var(--brand-main)); color: #e8f4ff; padding: 28px 20px; margin-top: 32px; text-align:center }
+    footer p { margin:6px 0 }
 
-    @media (max-width: 600px) {
-      header { padding: 12px 20px; flex-direction: column; gap: 8px; }
-      nav { flex-wrap: wrap; justify-content: center; }
-      .hero h1 { font-size: 28px; }
-    }
+    @media (max-width: 900px) { .contact-grid{ grid-template-columns:1fr } }
+    @media (max-width: 600px) { header{ padding:12px 16px; } nav{ display:none } .brand-name strong{font-size:16px} }
   </style>
 </head>
 <body>
   <header>
     <div class="brand">
-      <div class="logo">IS</div>
+      <div class="crest" aria-hidden="true">
+        <!-- Detailed crest SVG: book + torch + laurel -->
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Brasão ISULPAR">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0%" stop-color="#0f3a75" />
+              <stop offset="100%" stop-color="#1e66d0" />
+            </linearGradient>
+            <linearGradient id="g2" x1="0" x2="1">
+              <stop offset="0%" stop-color="#fff" stop-opacity="0.95" />
+              <stop offset="100%" stop-color="#dfeefd" stop-opacity="0.9" />
+            </linearGradient>
+          </defs>
+
+          <rect x="2" y="2" width="60" height="60" rx="10" fill="url(#g1)" />
+          <!-- laurel -->
+          <g transform="translate(8,10) scale(0.9)" fill="url(#g2)">
+            <path d="M18 2c-3 3-8 6-10 12 2 2 6 4 10 4s8-2 10-4c-2-6-7-9-10-12z" opacity="0.9"/>
+            <path d="M46 2c3 3 8 6 10 12-2 2-6 4-10 4s-8-2-10-4c2-6 7-9 10-12z" opacity="0.9"/>
+          </g>
+          <!-- book -->
+          <g transform="translate(12,18) scale(0.9)" fill="#fff">
+            <path d="M10 6v20c0 1.1.9 2 2 2h20V6H12c-1.1 0-2 .9-2 2z" />
+            <path d="M34 6v22h4V6z" opacity="0.9"/>
+          </g>
+          <!-- torch -->
+          <g transform="translate(28,8) scale(0.45)" fill="#fff">
+            <path d="M20 28c0 5-4 9-9 9s-9-4-9-9c0-4 3-7 4-9 1-2 5-4 5-7 0-3 4-6 6-6s6 3 6 6c0 3 4 5 5 7 1 2 4 5 4 9z"/>
+            <rect x="14" y="28" width="12" height="20" rx="3"/>
+          </g>
+        </svg>
+      </div>
+
       <div class="brand-name">
         <strong>ISULPAR</strong>
-        <div style="font-size: 13px; opacity: 0.9;">Instituto Superior do Litoral do Paraná</div>
+        <small>Instituto Superior do Litoral do Paraná</small>
       </div>
     </div>
+
     <nav>
-      <a href="#sobre" class="nav-link">Sobre</a>
-      <a href="#cursos" class="nav-link">Cursos</a>
-      <a href="#servicos" class="nav-link">Serviços</a>
-      <a href="#contato" class="nav-link">Contato</a>
+      <a class="nav-link" href="#sobre">Sobre</a>
+      <a class="nav-link" href="#cursos">Cursos</a>
+      <a class="nav-link" href="#servicos">Serviços</a>
+      <a class="nav-link" href="#contato">Contato</a>
     </nav>
   </header>
 
-  <section class="hero">
-    <h1>Portal Acadêmico ISULPAR</h1>
-    <p>Um ambiente digital redesenhado para oferecer praticidade, clareza e acessibilidade aos alunos e professores.</p>
-    <small>(Exemplo de Redesign — Projeto Acadêmico)</small>
-  </section>
+  <main>
+    <section class="hero" role="banner">
+      <h1>Portal Acadêmico ISULPAR</h1>
+      <p>Uma proposta de redesign do portal institucional, com foco em clareza, acessibilidade e identidade visual.</p>
+      <div class="meta">(Versão demonstrativa — elementos não funcionais)</div>
+    </section>
 
-  <section id="sobre" class="about">
-    <h2>Sobre o ISULPAR</h2>
-    <p>O Instituto Superior do Litoral do Paraná (ISULPAR) é uma instituição de ensino superior comprometida com a formação ética, crítica e inovadora. Este projeto apresenta um redesign do portal acadêmico, aplicando princípios de usabilidade e experiência do usuário (UI/UX).</p>
-  </section>
+    <div class="container">
+      <section id="sobre" class="about">
+        <h2>Sobre o ISULPAR</h2>
+        <p>O Instituto Superior do Litoral do Paraná (ISULPAR) atua na formação de profissionais nas áreas de humanas, gestão e tecnologia. Esta página apresenta uma proposta de redesign, organizada para facilitar a navegação e priorizar as principais necessidades dos usuários acadêmicos.</p>
+      </section>
 
-  <section id="cursos">
-    <h2>Cursos de Graduação</h2>
-    <div class="cards">
-      <div class="card">
-        <h3>Direito</h3>
-        <p>Curso voltado à formação jurídica moderna, ética e prática.</p>
-      </div>
-      <div class="card">
-        <h3>Administração</h3>
-        <p>Gestão estratégica, liderança e inovação empresarial.</p>
-      </div>
-      <div class="card">
-        <h3>Pedagogia</h3>
-        <p>Formação de educadores com foco em metodologias ativas.</p>
-      </div>
-      <div class="card">
-        <h3>Sistemas de Informação</h3>
-        <p>Tecnologia, dados e soluções digitais para o futuro.</p>
-      </div>
+      <section id="cursos">
+        <h2>Cursos de Graduação</h2>
+        <div class="cards">
+          <div class="card course">
+            <div class="icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7l10 5 10-5-10-5z" fill="#0a3161"/><path d="M2 17l10 5 10-5" fill="#174ea6"/></svg>
+            </div>
+            <div>
+              <strong>Direito</strong>
+              <div style="color:var(--text-light);font-size:14px">Formação jurídica com ênfase em prática e ética profissional.</div>
+            </div>
+          </div>
+
+          <div class="card course">
+            <div class="icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="20" height="14" rx="2" fill="#0a3161"/><path d="M7 21h10" stroke="#174ea6" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <strong>Administração</strong>
+              <div style="color:var(--text-light);font-size:14px">Gestão, finanças e liderança orientadas ao mercado.</div>
+            </div>
+          </div>
+
+          <div class="card course">
+            <div class="icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 7h16v10H4z" fill="#0a3161"/><path d="M8 11h8" stroke="#174ea6" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <strong>Pedagogia</strong>
+              <div style="color:var(--text-light);font-size:14px">Formação de professores com metodologias contemporâneas.</div>
+            </div>
+          </div>
+
+          <div class="card course">
+            <div class="icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h18v14H3z" fill="#0a3161"/><path d="M7 21h10" stroke="#174ea6" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <strong>Sistemas de Informação</strong>
+              <div style="color:var(--text-light);font-size:14px">Tecnologia, programação e análise de dados para solução de problemas.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="servicos">
+        <h2>Serviços e Acesso Rápido</h2>
+        <div class="cards">
+          <div class="card">
+            <h3>Portal do Aluno</h3>
+            <p>Aqui o aluno encontra notas, horários e situações de matrícula (exemplo demonstrativo).</p>
+          </div>
+          <div class="card">
+            <h3>Portal do Professor</h3>
+            <p>Ferramentas para lançamento de notas, turmas e comunicação institucional.</p>
+          </div>
+          <div class="card">
+            <h3>Biblioteca</h3>
+            <p>Consulta ao catálogo, renovação e reservas (simulado).</p>
+          </div>
+          <div class="card">
+            <h3>Atendimento</h3>
+            <p>Informações sobre matrícula, documentos e suporte acadêmico.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="contato">
+        <h2>Contato</h2>
+        <div class="contact-grid">
+          <div class="contact-box">
+            <p><strong>Endereço:</strong> Rua Exemplo, 123 — Paranaguá, PR</p>
+            <p><strong>Telefone:</strong> (41) 99999-0000</p>
+            <p><strong>E-mail:</strong> contato@isulpar.edu.br</p>
+          </div>
+          <div class="contact-box">
+            <h3>Horário de Atendimento</h3>
+            <p>Seg — Sex: 08:00 — 17:00</p>
+            <p>Central de atendimento e informações acadêmicas.</p>
+          </div>
+        </div>
+      </section>
+
     </div>
-  </section>
-
-  <section id="servicos">
-    <h2>Serviços e Acesso Rápido</h2>
-    <div class="cards">
-      <div class="card">
-        <h3>Portal do Aluno</h3>
-        <p>Acesse notas, frequência, horários e documentos acadêmicos.</p>
-      </div>
-      <div class="card">
-        <h3>Portal do Professor</h3>
-        <p>Gerencie turmas, notas e comunicações com alunos.</p>
-      </div>
-      <div class="card">
-        <h3>Biblioteca</h3>
-        <p>Consulte o acervo, renove empréstimos e acompanhe reservas.</p>
-      </div>
-      <div class="card">
-        <h3>Atendimento</h3>
-        <p>Suporte acadêmico e administrativo em um só lugar.</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="contato">
-    <h2>Contato</h2>
-    <div class="about">
-      <p><strong>Endereço:</strong> Rua Exemplo, 123 - Paranaguá, PR</p>
-      <p><strong>Telefone:</strong> (41) 99999-0000 | <strong>E-mail:</strong> contato@isulpar.edu.br</p>
-    </div>
-  </section>
+  </main>
 
   <footer>
     <p>© 2025 ISULPAR - Instituto Superior do Litoral do Paraná</p>
-    <p>Projeto acadêmico de redesign — Exemplo de interface institucional (UI/UX).</p>
+    <p>Exemplo de redesign institucional — uso acadêmico.</p>
   </footer>
+
+  <script>
+    // Protótipo estático: botões não redirecionam para o portal real
+    document.querySelectorAll('.nav-link').forEach(el=>el.addEventListener('click', e=>{
+      e.preventDefault();
+      const target = el.getAttribute('href')?.replace('#','');
+      const elTarget = document.getElementById(target);
+      if(elTarget) elTarget.scrollIntoView({behavior:'smooth'});
+    }));
+  </script>
 </body>
 </html>
