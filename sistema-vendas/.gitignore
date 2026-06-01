@@ -1,0 +1,32 @@
+# Node.js (Serviço de Clientes)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python (Serviços de Produtos e Vendas)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+.pytest_cache/
+
+# Arquivos de Variáveis de Ambiente / Segredos
+.env
+.env.local
+.env.development.local
+
+# Banco de dados locais (caso gerem algum .db fora do container)
+*.db
+*.sqlite3
+
+# Sistemas Operacionais e IDEs (VS Code local/arquivos temporários)
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
