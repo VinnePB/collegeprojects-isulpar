@@ -1,0 +1,26 @@
+Sistema Distribuído de Vendas
+Este projeto consiste em um ecossistema focado no controle e processamento de vendas. A aplicação adota o modelo de microsserviços, onde cada componente possui uma responsabilidade única, roda de forma isolada via Docker e se comunica através de requisições HTTP em uma rede virtualizada.
+
+Objetivo da Atividade
+O objetivo deste projeto é simular o funcionamento de uma arquitetura de software distribuída. Em vez de uma aplicação unificada, a lógica de negócio é dividida em serviços independentes. Isso demonstra na prática os conceitos de escalabilidade, comunicação entre APIs em diferentes ecossistemas (Node.js e Python) e o desacoplamento de rotinas por meio de processamento assíncrono em fila.
+
+Estrutura do Ecossistema
+O sistema opera a partir de quatro componentes principais que atuam em conjunto.
+
+Frontend
+Responsável por entregar a interface gráfica ao usuário através de um servidor Nginx. Esta camada não processa regras de negócio nem armazena dados. Ela apenas fornece a página para o navegador do cliente, que executa o JavaScript necessário para disparar as requisições para as APIs.
+
+Serviço de Clientes
+Este microsserviço lida exclusivamente com o cadastro e a listagem de clientes. Desenvolvido em Node.js, ele expõe os pontos de acesso para o gerenciamento desses dados cadastrais.
+
+Serviço de Produtos
+Focado no gerenciamento do catálogo de mercadorias e preços, este componente utiliza Python (FastAPI). Ele fornece as informações estruturadas que abastecem as opções de compra na interface.
+
+Serviço de Vendas
+Construído em Python com o framework Flask, este serviço atua na recepção de ordens de compra. Ele recebe os pedidos da interface e os envia para uma fila interna paralela, que processa as transações de maneira assíncrona antes de disponibilizar o status final.
+
+Fluxo de Dados e Comunicação
+Ocorre diretamente a partir do navegador do usuário. Ao carregar a interface, o JavaScript consulta as APIs de Clientes e Produtos para preencher os menus de seleção de forma dinâmica. Ao realizar uma venda, o operador seleciona o cliente e o produto diretamente na tela, gerando um payload JSON que é despachado para o serviço de vendas e processado pela fila.
+
+Persistência de Dados
+Os dados criados durante a execução residem na memória volátil de cada contêiner. O ciclo de vida dessas informações está atrelado à execução dos microsserviços, de modo que reiniciar o ambiente redefine o estado atual. Em cenários reais, essa mesma estrutura seria conectada a instâncias persistentes de bancos de dados isolados para cada serviço.

@@ -1,0 +1,25 @@
+{
+  "name": "Sistema de Vendas",
+  "portsAttributes": {
+    "3000": {
+      "label": "Frontend (Nginx)",
+      "onAutoForward": "notify",
+      "visibility": "public"
+    },
+    "5001": {
+      "label": "API Clientes (Node)",
+      "onAutoForward": "notify",
+      "visibility": "public"
+    },
+    "5002": {
+      "label": "API Produtos (Python/FastAPI)",
+      "onAutoForward": "notify",
+      "visibility": "public"
+    },
+    "5003": {
+      "label": "API Vendas (Python/Flask)",
+      "onAutoForward": "notify",
+      "visibility": "public"
+    }
+  }
+}
