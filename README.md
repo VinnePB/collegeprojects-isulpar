@@ -1,2 +1,2 @@
 # collegeprojects-isulpar
-college related projects
+Mainly only School Projects related
