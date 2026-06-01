@@ -10,7 +10,7 @@
         h2 { color: #333; border-bottom: 2px solid #ccc; padding-bottom: 5px; }
         button { background: #28a745; color: white; border: none; padding: 10px; cursor: pointer; width: 100%; border-radius: 4px; }
         button:hover { background: #218838; }
-        input { width: 93%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        input, select { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
         ul { list-style: none; padding: 0; max-height: 150px; overflow-y: auto; }
         li { background: #eee; margin-bottom: 5px; padding: 5px; border-radius: 3px; font-size: 14px; }
     </style>
@@ -38,8 +38,17 @@
 
         <div class="card">
             <h2>Processar Venda (Fila)</h2>
-            <input type="number" id="vendaCliId" placeholder="ID do Cliente">
-            <input type="number" id="vendaProdId" placeholder="ID do Produto">
+            
+            <label for="vendaCliSelect" style="font-size: 12px; font-weight: bold; color: #555;">Selecione o Cliente:</label>
+            <select id="vendaCliSelect">
+                <option value="">Carregando clientes...</option>
+            </select>
+            
+            <label for="vendaProdSelect" style="font-size: 12px; font-weight: bold; color: #555;">Selecione o Produto:</label>
+            <select id="vendaProdSelect">
+                <option value="">Carregando produtos...</option>
+            </select>
+            
             <button onclick="enviarVenda()" style="background: #007bff;">Enviar para Fila</button>
             <h3>Transações Processadas:</h3>
             <ul id="listaVendas"></ul>
@@ -48,28 +57,52 @@
     </div>
 
     <script>
-        // URLs expostas pelo Docker Compose para a máquina local
-        const API_CLIENTES = 'http://localhost:5001/clientes';
-        const API_PRODUTOS = 'http://localhost:5002/produtos';
-        const API_VENDAS = 'http://localhost:5003/vendas';
+        // =========================================================================================================
+        // ATENÇÃO: Substitua as URLs abaixo pelas URLs públicas reais que você copiou da aba "Ports" do Codespaces
+        // =========================================================================================================
+        const API_CLIENTES = 'https://miniature-memory-pjpjr9g565pwcrjqr-5001.app.github.dev/clientes';
+        const API_PRODUTOS = 'https://miniature-memory-pjpjr9g565pwcrjqr-5002.app.github.dev/produtos';
+        const API_VENDAS   = 'https://miniature-memory-pjpjr9g565pwcrjqr-5003.app.github.dev/vendas';
 
         async function carregarDados() {
             try {
+                // 1. Carregar e listar Clientes + Preencher o Dropdown de vendas
                 const c = await fetch(API_CLIENTES).then(r => r.json());
                 document.getElementById('listaClientes').innerHTML = c.map(i => `<li>ID: ${i.id} - ${i.nome}</li>`).join('');
                 
+                const selectCli = document.getElementById('vendaCliSelect');
+                const clienteSelecionadoAnteriormente = selectCli.value;
+                selectCli.innerHTML = '<option value="">Selecione o cliente...</option>' + 
+                    c.map(i => `<option value="${i.id}">${i.nome} (ID: ${i.id})</option>`).join('');
+                selectCli.value = clienteSelecionadoAnteriormente; // Mantém a seleção caso o usuário já estivesse mexendo
+
+                // 2. Carregar e listar Produtos + Preencher o Dropdown de vendas
                 const p = await fetch(API_PRODUTOS).then(r => r.json());
                 document.getElementById('listaProdutos').innerHTML = p.map(i => `<li>ID: ${i.id} - ${i.nome} ($${i.preco})</li>`).join('');
                 
+                const selectProd = document.getElementById('vendaProdSelect');
+                const produtoSelecionadoAnteriormente = selectProd.value;
+                selectProd.innerHTML = '<option value="">Selecione o produto...</option>' + 
+                    p.map(i => `<option value="${i.id}">${i.nome} - R$ ${i.preco}</option>`).join('');
+                selectProd.value = produtoSelecionadoAnteriormente;
+
+                // 3. Carregar e listar Vendas realizadas
                 const v = await fetch(API_VENDAS).then(r => r.json());
                 document.getElementById('listaVendas').innerHTML = v.map(i => `<li>Tx: ${i.id_transacao} | ${i.cliente} comprou ${i.produto} [${i.status}]</li>`).join('');
-            } catch(e) { console.log("Aguardando serviços iniciarem..."); }
+            
+            } catch(e) { 
+                console.log("Erro de comunicação com os microsserviços ou aguardando inicialização...", e); 
+            }
         }
 
         async function cadastrarCliente() {
             const nome = document.getElementById('cliNome').value;
             const telefone = document.getElementById('cliFone').value;
+            if(!nome) return alert("Digite o nome do cliente");
+            
             await fetch(API_CLIENTES, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({nome, telefone}) });
+            document.getElementById('cliNome').value = '';
+            document.getElementById('cliFone').value = '';
             carregarDados();
         }
 
@@ -77,18 +110,29 @@
             const nome = document.getElementById('prodNome').value;
             const descricao = document.getElementById('prodDesc').value;
             const preco = parseFloat(document.getElementById('prodPreco').value);
+            if(!nome || isNaN(preco)) return alert("Preencha o nome e preço do produto");
+            
             await fetch(API_PRODUTOS, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({nome, descricao, preco}) });
+            document.getElementById('prodNome').value = '';
+            document.getElementById('prodDesc').value = '';
+            document.getElementById('prodPreco').value = '';
             carregarDados();
         }
 
         async function enviarVenda() {
-            const cliente_id = parseInt(document.getElementById('vendaCliId').value);
-            const produto_id = parseInt(document.getElementById('vendaProdId').value);
+            const cliente_id = parseInt(document.getElementById('vendaCliSelect').value);
+            const produto_id = parseInt(document.getElementById('vendaProdSelect').value);
+            
+            if(isNaN(cliente_id) || isNaN(produto_id)) {
+                return alert("Por favor, selecione um cliente e um produto no menu antes de enviar!");
+            }
+            
             await fetch(API_VENDAS, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({cliente_id, produto_id}) });
             alert("Venda enviada com sucesso para a fila paralela!");
             setTimeout(carregarDados, 1000); // Aguarda um segundo para o worker processar e atualiza
         }
 
+        // Executa o timer para atualizar as listas e menus de 3 em 3 segundos
         setInterval(carregarDados, 3000);
         carregarDados();
     </script>
