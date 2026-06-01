@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    networks:
+      - rede-sistema
+    depends_on:
+      - clientes
+      - produtos
+      - vendas
+
+  clientes:
+    build: ./clientes
+    ports:
+      - "5001:5001"
+    networks:
+      - rede-sistema
+
+  produtos:
+    build: ./produtos
+    ports:
+      - "5002:5002"
+    networks:
+      - rede-sistema
+
+  vendas:
+    build: ./vendas
+    ports:
+      - "5003:5003"
+    networks:
+      - rede-sistema
+
+networks:
+  rede-sistema:
+    driver: bridge

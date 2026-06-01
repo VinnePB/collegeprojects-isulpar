@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel do Sistema Distribuído de Vendas</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background: #f4f4f9; }
+        .container { display: flex; gap: 20px; flex-wrap: wrap; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 300px; }
+        h2 { color: #333; border-bottom: 2px solid #ccc; padding-bottom: 5px; }
+        button { background: #28a745; color: white; border: none; padding: 10px; cursor: pointer; width: 100%; border-radius: 4px; }
+        button:hover { background: #218838; }
+        input { width: 93%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        ul { list-style: none; padding: 0; max-height: 150px; overflow-y: auto; }
+        li { background: #eee; margin-bottom: 5px; padding: 5px; border-radius: 3px; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <h1>Controle de Vendas - Sistema Distribuído</h1>
+    <div class="container">
+        
+        <div class="card">
+            <h2>Clientes</h2>
+            <input type="text" id="cliNome" placeholder="Nome">
+            <input type="text" id="cliFone" placeholder="Telefone">
+            <button onclick="cadastrarCliente()">Cadastrar Cliente</button>
+            <ul id="listaClientes"></ul>
+        </div>
+
+        <div class="card">
+            <h2>Produtos</h2>
+            <input type="text" id="prodNome" placeholder="Nome">
+            <input type="text" id="prodDesc" placeholder="Descrição">
+            <input type="number" id="prodPreco" placeholder="Preço">
+            <button onclick="cadastrarProduto()">Cadastrar Produto</button>
+            <ul id="listaProdutos"></ul>
+        </div>
+
+        <div class="card">
+            <h2>Processar Venda (Fila)</h2>
+            <input type="number" id="vendaCliId" placeholder="ID do Cliente">
+            <input type="number" id="vendaProdId" placeholder="ID do Produto">
+            <button onclick="enviarVenda()" style="background: #007bff;">Enviar para Fila</button>
+            <h3>Transações Processadas:</h3>
+            <ul id="listaVendas"></ul>
+        </div>
+
+    </div>
+
+    <script>
+        // URLs expostas pelo Docker Compose para a máquina local
+        const API_CLIENTES = 'http://localhost:5001/clientes';
+        const API_PRODUTOS = 'http://localhost:5002/produtos';
+        const API_VENDAS = 'http://localhost:5003/vendas';
+
+        async function carregarDados() {
+            try {
+                const c = await fetch(API_CLIENTES).then(r => r.json());
+                document.getElementById('listaClientes').innerHTML = c.map(i => `<li>ID: ${i.id} - ${i.nome}</li>`).join('');
+                
+                const p = await fetch(API_PRODUTOS).then(r => r.json());
+                document.getElementById('listaProdutos').innerHTML = p.map(i => `<li>ID: ${i.id} - ${i.nome} ($${i.preco})</li>`).join('');
+                
+                const v = await fetch(API_VENDAS).then(r => r.json());
+                document.getElementById('listaVendas').innerHTML = v.map(i => `<li>Tx: ${i.id_transacao} | ${i.cliente} comprou ${i.produto} [${i.status}]</li>`).join('');
+            } catch(e) { console.log("Aguardando serviços iniciarem..."); }
+        }
+
+        async function cadastrarCliente() {
+            const nome = document.getElementById('cliNome').value;
+            const telefone = document.getElementById('cliFone').value;
+            await fetch(API_CLIENTES, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({nome, telefone}) });
+            carregarDados();
+        }
+
+        async function cadastrarProduto() {
+            const nome = document.getElementById('prodNome').value;
+            const descricao = document.getElementById('prodDesc').value;
+            const preco = parseFloat(document.getElementById('prodPreco').value);
+            await fetch(API_PRODUTOS, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({nome, descricao, preco}) });
+            carregarDados();
+        }
+
+        async function enviarVenda() {
+            const cliente_id = parseInt(document.getElementById('vendaCliId').value);
+            const produto_id = parseInt(document.getElementById('vendaProdId').value);
+            await fetch(API_VENDAS, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({cliente_id, produto_id}) });
+            alert("Venda enviada com sucesso para a fila paralela!");
+            setTimeout(carregarDados, 1000); // Aguarda um segundo para o worker processar e atualiza
+        }
+
+        setInterval(carregarDados, 3000);
+        carregarDados();
+    </script>
+</body>
+</html>
