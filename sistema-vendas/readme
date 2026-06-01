@@ -1,26 +1,36 @@
-Sistema Distribuído de Vendas
-Este projeto consiste em um ecossistema focado no controle e processamento de vendas. A aplicação adota o modelo de microsserviços, onde cada componente possui uma responsabilidade única, roda de forma isolada via Docker e se comunica através de requisições HTTP em uma rede virtualizada.
+Documentação do Sistema Distribuído de Vendas
+Este projeto consiste em um ecossistema de software focado no controle e processamento de vendas. A aplicação adota o modelo de microsserviços, onde as responsabilidades de negócio são fragmentadas em componentes independentes que rodam de forma isolada através de contêineres Docker, comunicando-se via requisições HTTP em uma rede virtualizada.
 
 Objetivo da Atividade
-O objetivo deste projeto é simular o funcionamento de uma arquitetura de software distribuída. Em vez de uma aplicação unificada, a lógica de negócio é dividida em serviços independentes. Isso demonstra na prática os conceitos de escalabilidade, comunicação entre APIs em diferentes ecossistemas (Node.js e Python) e o desacoplamento de rotinas por meio de processamento assíncrono em fila.
+O objetivo deste projeto é desenvolver e implantar uma arquitetura de software distribuída para compreender, na prática, os desafios de integração, escalabilidade e comunicação entre sistemas independentes.
 
-Estrutura do Ecossistema
-O sistema opera a partir de quatro componentes principais que atuam em conjunto.
+Em vez de centralizar a aplicação em um único bloco de código (monólito), a lógica foi dividida em serviços especializados que utilizam tecnologias distintas (Node.js e Python). Isso demonstra como diferentes ecossistemas podem cooperar através de contratos de API bem definidos e como o desacoplamento de rotinas críticas (como a finalização de uma venda) melhora a resiliência do sistema através do processamento assíncrono em fila.
 
-Frontend
-Responsável por entregar a interface gráfica ao usuário através de um servidor Nginx. Esta camada não processa regras de negócio nem armazena dados. Ela apenas fornece a página para o navegador do cliente, que executa o JavaScript necessário para disparar as requisições para as APIs.
+Componentes do Sistema e Suas Funcionalidades
+O sistema opera a partir de quatro contêineres que executam papéis específicos na regra de negócio.
 
-Serviço de Clientes
-Este microsserviço lida exclusivamente com o cadastro e a listagem de clientes. Desenvolvido em Node.js, ele expõe os pontos de acesso para o gerenciamento desses dados cadastrais.
+Frontend (Servidor Nginx)
+Entrega a interface gráfica ao usuário. Ele roda um servidor Nginx configurado para servir uma página web estática. Este componente não processa nenhuma regra de negócio e não tem acesso a armazenamento. Sua única função é carregar o código HTML e o JavaScript no navegador do cliente. A partir desse momento, as interações do usuário disparam requisições assíncronas do próprio navegador em direção às APIs do backend.
 
-Serviço de Produtos
-Focado no gerenciamento do catálogo de mercadorias e preços, este componente utiliza Python (FastAPI). Ele fornece as informações estruturadas que abastecem as opções de compra na interface.
+Serviço de Clientes (Node.js)
+Responsável exclusivo pelo ciclo de vida dos dados dos clientes. Desenvolvido em Node.js, este microsserviço expõe rotas HTTP para receber dados cadastrais (como nome e telefone), processá-los e armazená-los. Ele também responde às requisições de listagem, fornecendo a relação de clientes com seus respectivos identificadores únicos (IDs) para alimentar a interface.
 
-Serviço de Vendas
-Construído em Python com o framework Flask, este serviço atua na recepção de ordens de compra. Ele recebe os pedidos da interface e os envia para uma fila interna paralela, que processa as transações de maneira assíncrona antes de disponibilizar o status final.
+Serviço de Produtos (Python / FastAPI)
+Gerencia o catálogo de mercadorias disponíveis no sistema. Construído em Python com o framework FastAPI e gerenciado pelo servidor assíncrono Uvicorn, este serviço valida e armazena informações sobre nome, descrição e preço dos produtos. Ele atua fornecendo a lista atualizada de itens estruturados para que o painel de vendas exiba as opções de compra em tempo real.
 
-Fluxo de Dados e Comunicação
-Ocorre diretamente a partir do navegador do usuário. Ao carregar a interface, o JavaScript consulta as APIs de Clientes e Produtos para preencher os menus de seleção de forma dinâmica. Ao realizar uma venda, o operador seleciona o cliente e o produto diretamente na tela, gerando um payload JSON que é despachado para o serviço de vendas e processado pela fila.
+Serviço de Vendas (Python / Flask)
+Centraliza a recepção e o histórico das ordens de compra. Desenvolvido em Python com o framework Flask, este serviço recebe os pedidos contendo o ID do cliente e o ID do produto selecionados na interface. Em vez de processar a venda imediatamente e travar a resposta, o serviço joga a requisição para uma fila interna paralela que gerencia as transações de forma assíncrona. Esse padrão de projeto garante que o sistema continue recebendo pedidos mesmo sob alta demanda, processando cada transação em segundo plano e gerando um número de transação com o status do pedido.
 
-Persistência de Dados
-Os dados criados durante a execução residem na memória volátil de cada contêiner. O ciclo de vida dessas informações está atrelado à execução dos microsserviços, de modo que reiniciar o ambiente redefine o estado atual. Em cenários reais, essa mesma estrutura seria conectada a instâncias persistentes de bancos de dados isolados para cada serviço.
+Fluxo de Execução da Funcionalidade
+A integração entre os componentes ocorre de forma dinâmica através do navegador.
+
+Alimentação dos Dados: O operador utiliza os blocos de "Clientes" e "Produtos" para realizar novos cadastros. O JavaScript envia as informações via método POST para as APIs correspondentes (Node.js ou FastAPI), que registram os dados em memória e geram IDs incrementais automaticamente.
+
+Sincronização: A cada 3 segundos, o frontend realiza requisições automáticas do tipo GET para o Serviço de Clientes e para o Serviço de Produtos. O JavaScript lê as respostas dessas APIs e atualiza os menus de seleção (dropdowns) da tela de vendas. Isso elimina a necessidade de adivinhar ou digitar IDs manualmente.
+
+Fechamento do Pedido: Ao selecionar um cliente e um produto no menu e clicar em "Enviar para Fila", o frontend envia os dados estruturados para o Serviço de Vendas (Flask). O serviço aciona a rotina assíncrona da fila, e a interface atualiza a lista de "Transações Processadas", exibindo o ID da transação, os nomes dos envolvidos e o status atual do processamento.
+
+Persistência de Dados e Volatilidade
+Para fins didáticos e de simulação, os dados gerados durante a execução do sistema residem exclusivamente na memória RAM alocada para cada contêiner (através de estruturas como arrays e dicionários no próprio código do servidor).
+
+Como os contêineres Docker são efêmeros por padrão, o ciclo de vida dos dados está estritamente ligado ao tempo de execução dos serviços. Derrubar o ambiente com comandos de limpeza limpa a memória operacional de cada microsserviço. Em uma aplicação de produção, essa mesma estrutura de microsserviços utilizaria contêineres dedicados a bancos de dados persistentes (como PostgreSQL ou MongoDB) conectados individualmente a cada API.
